@@ -20,3 +20,9 @@ folder to safeexambrowser.
 
 Once installed you need to go to the Site administration -> Notifications page
 to let the plugin install itself.
+
+Note that, for this plugin to work fully, you need a version of Moodle that
+includes the fixes for MDL-39050 and MDL-39167. That probably means Moodle
+2.5+, 2.4.4+ or 2.3.7+. Without those two fixes, you will not be able to set the
+download link configuration, nor will the keys you type into the quiz settings
+page be validated.

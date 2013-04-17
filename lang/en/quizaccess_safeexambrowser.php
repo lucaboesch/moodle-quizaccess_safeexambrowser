@@ -22,15 +22,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 
 $string['allowedbrowserkeys'] = 'Allowed browser keys';
-$string['allowedbrowserkeys_help'] = 'In this box you can enter the allowed browser keys for versions of Save Exam Browser that are permitted to access this quiz. If no keys are entered, then SEB is not required for this quiz.';
-$string['allowedbrowserkeyssyntax'] = 'You must enter the allowed keys one per line.';
-$string['pluginname'] = 'Save Exam Browser quiz access rule';
+$string['allowedbrowserkeys_help'] = 'In this box you can enter the allowed browser keys for versions of Safe Exam Browser that are permitted to access this quiz. If no keys are entered, then SEB is not required for this quiz.';
+$string['allowedbrowserkeysdistinct'] = 'The keys must all be different.';
+$string['allowedbrowserkeyssyntax'] = 'You must enter the allowed keys one per line. A key should be a 64-character hex string.';
+$string['pluginname'] = 'Safe Exam Browser quiz access rule';
 $string['safebrowserdownloadurl'] = 'Safe Exam Browser download URL.';
 $string['safebrowserdownloadurl_desc'] = 'If you provide a URL here, then users will be told that they can download the required version of Safe Exam Browser from there.';
 $string['safebrowsermustbeused'] = 'You must use an approved version of Safe Exam Browser to attempt this quiz.';
-$string['safebrowsermustbeusedwithlink'] = 'You must use an approved version of Safe Exam Browser to attempt this quiz. You can download this from {$a->link}.';
+$string['safebrowsermustbeusedwithlink'] = 'You must use an approved version of Safe Exam Browser to attempt this quiz. You can download it from {$a->link}.';

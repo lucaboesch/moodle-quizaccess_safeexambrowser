@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the quizaccess_safeexambrowser plugin.
+ * Upgrade script for the quizaccess_safeexambrowser plugin.
  *
  * @package   quizaccess_safeexambrowser
  * @copyright 2013 The Open University
@@ -26,9 +26,28 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2013041700;
-$plugin->requires  = 2011120500;
-$plugin->cron      = 0;
-$plugin->component = 'quizaccess_safeexambrowser';
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release   = '0.5';
+/**
+ * quizaccess_safeexambrowser module upgrade function.
+ * @param string $oldversion the version we are upgrading from.
+ */
+function xmldb_quizaccess_safeexambrowser_upgrade($oldversion) {
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2013041700) {
+
+        // Rename field browserkeys on table quizaccess_safeexambrowser to allowedkeys.
+        $table = new xmldb_table('quizaccess_safeexambrowser');
+        $field = new xmldb_field('browserkeys', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'quizid');
+
+        // Launch rename field browserkeys.
+        $dbman->rename_field($table, $field, 'allowedkeys');
+
+        // Safeexambrowser savepoint reached.
+        upgrade_plugin_savepoint(true, 2013041700, 'quizaccess', 'safeexambrowser');
+    }
+
+    return true;
+}
+

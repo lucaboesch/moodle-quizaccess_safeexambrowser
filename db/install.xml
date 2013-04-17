@@ -7,8 +7,8 @@
     <TABLE NAME="quizaccess_safeexambrowser" COMMENT="Stores the browser keys that are allowed to be used with this quiz.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="quizid"/>
-        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Foreign key to quiz.id." PREVIOUS="id" NEXT="browserkey"/>
-        <FIELD NAME="browserkeys" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="A permitted browser keys for this quiz, newline separated." PREVIOUS="quizid"/>
+        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Foreign key to quiz.id." PREVIOUS="id" NEXT="allowedkeys"/>
+        <FIELD NAME="allowedkeys" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="A permitted browser keys for this quiz, newline separated." PREVIOUS="quizid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="quizid"/>

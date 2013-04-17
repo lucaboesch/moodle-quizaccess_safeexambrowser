@@ -33,7 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  *
  * If any keys are set up, we write XML like
  * <quizaccess_safeexambrowser>
- *     <key>1</key>
+ *     <keys>0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+ * 1123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef</keys>
  * </quizaccess_safeexambrowser>
  * in the appropriate place. Otherwise nothing will be added. This matches the DB structure.
  *
@@ -43,12 +44,12 @@ defined('MOODLE_INTERNAL') || die();
 class backup_quizaccess_safeexambrowser_subplugin extends backup_mod_quiz_access_subplugin {
 
     protected function define_quiz_subplugin_structure() {
-        // TODO
+
         // Create XML elements.
         $subplugin = $this->get_subplugin_element();
         $subplugin_wrapper = new backup_nested_element($this->get_recommended_name());
         $subplugin_table_settings = new backup_nested_element('quizaccess_safeexambrowser',
-                null, array('honestycheckrequired'));
+                null, array('allowedkeys'));
 
         // Connect XML elements into the tree.
         $subplugin->add_child($subplugin_wrapper);

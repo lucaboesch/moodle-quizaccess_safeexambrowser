@@ -24,6 +24,7 @@
 
 
 require_once($CFG->dirroot . '/mod/quiz/backup/moodle2/restore_mod_quiz_access_subplugin.class.php');
+require_once($CFG->dirroot . '/mod/quiz/accessrule/safeexambrowser/rule.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,7 +34,8 @@ defined('MOODLE_INTERNAL') || die();
  *
  * The XML looks like
  * <quizaccess_safeexambrowser>
- *     <key>1</key>
+ *     <keys>0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+ * 1123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef</keys>
  * </quizaccess_safeexambrowser>
  * If there are any keys, they need to be inserted into the DB. Otherwise, nothing
  * needs to be written to the DB.
@@ -44,7 +46,6 @@ defined('MOODLE_INTERNAL') || die();
 class restore_quizaccess_safeexambrowser_subplugin extends restore_mod_quiz_access_subplugin {
 
     protected function define_quiz_subplugin_structure() {
-        // TODO
         $paths = array();
 
         $elename = $this->get_namefor('');
@@ -58,11 +59,12 @@ class restore_quizaccess_safeexambrowser_subplugin extends restore_mod_quiz_acce
      * Processes the quizaccess_safeexambrowser element, if it is in the file.
      * @param array $data the data read from the XML file.
      */
-    public function process_key($data) {
+    public function process_quizaccess_safeexambrowser($data) {
         global $DB;
 
         $data = (object)$data;
         $data->quizid = $this->get_new_parentid('quiz');
+        $data->allowedkeys = quizaccess_safeexambrowser::clean_keys($data->allowedkeys);
         $DB->insert_record('quizaccess_safeexambrowser', $data);
     }
 }

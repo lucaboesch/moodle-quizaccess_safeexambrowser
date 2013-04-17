@@ -36,6 +36,14 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
  */
 class quizaccess_safeexambrowser extends quiz_access_rule_base {
 
+    /** @var array the allowed keys. */
+    protected $allowedkeys;
+
+    public function __construct($quizobj, $timenow) {
+        parent::__construct($quizobj, $timenow);
+        $this->allowedkeys = self::split_keys($this->quiz->safeexambrowser_allowedkeys);
+    }
+
     public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
 
         if (empty($quizobj->get_quiz()->safeexambrowser_allowedkeys)) {
@@ -50,16 +58,19 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
         $mform->addElement('textarea', 'safeexambrowser_allowedkeys',
                 get_string('allowedbrowserkeys', 'quizaccess_safeexambrowser'),
                 array('rows' => 5, 'cols' => 70));
-        $mform->setType(safeexambrowser_allowedkeys, PARAM_RAW_TRIMMED);
+        $mform->setType('safeexambrowser_allowedkeys', PARAM_RAW_TRIMMED);
         $mform->addHelpButton('safeexambrowser_allowedkeys',
-                'allowedbrowserkeys_help', 'quizaccess_safeexambrowser');
+                'allowedbrowserkeys', 'quizaccess_safeexambrowser');
     }
 
     public static function validate_settings_form_fields(array $errors,
             array $data, $files, mod_quiz_mod_form $quizform) {
 
-        if (!empty($data['quizaccess_safeexambrowser']) && !self::validate_keys($data['quizaccess_safeexambrowser'])) {
-            $errors['quizaccess_safeexambrowser'] = get_string('allowedbrowserkeyssyntax', 'quizaccess_safeexambrowser');
+        if (!empty($data['safeexambrowser_allowedkeys'])) {
+            $keyerrors = self::validate_keys($data['safeexambrowser_allowedkeys']);
+            if ($keyerrors) {
+                $errors['safeexambrowser_allowedkeys'] = implode(' ', $keyerrors);
+            }
         }
 
         return $errors;
@@ -67,17 +78,17 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
 
     public static function save_settings($quiz) {
         global $DB;
-        if (empty($quiz->quizaccess_safeexambrowser)) {
+        if (empty($quiz->safeexambrowser_allowedkeys)) {
             $DB->delete_records('quizaccess_safeexambrowser', array('quizid' => $quiz->id));
         } else {
             $record = $DB->get_record('quizaccess_safeexambrowser', array('quizid' => $quiz->id));
             if (!$record) {
                 $record = new stdClass();
                 $record->quizid = $quiz->id;
-                $record->browserkeys = self::clean_keys($quiz->quizaccess_safeexambrowser);
+                $record->allowedkeys = self::clean_keys($quiz->safeexambrowser_allowedkeys);
                 $DB->insert_record('quizaccess_safeexambrowser', $record);
             } else {
-                $record->browserkeys = self::clean_keys($quiz->quizaccess_safeexambrowser);
+                $record->allowedkeys = self::clean_keys($quiz->safeexambrowser_allowedkeys);
                 $DB->update_record('quizaccess_safeexambrowser', $record);
             }
         }
@@ -85,13 +96,13 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
 
     public static function get_settings_sql($quizid) {
         return array(
-            'honestycheck.allowedkeys AS safeexambrowser_allowedkeys',
+            'safeexambrowser.allowedkeys AS safeexambrowser_allowedkeys',
             'LEFT JOIN {quizaccess_safeexambrowser} safeexambrowser ON safeexambrowser.quizid = quiz.id',
             array());
     }
 
     public function prevent_access() {
-        if (!self::check_keys()) {
+        if (!self::check_access($this->allowedkeys, $this->quizobj->get_context())) {
             return self::get_blocked_user_message();
         } else {
             return false;
@@ -102,6 +113,13 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
         return self::get_blocked_user_message();
     }
 
+    /**
+     * 
+     */
+    public function get_allowed_keys() {
+        return $this->allowedkeys;
+    }
+
     public function setup_attempt_page($page) {
         $page->set_title($this->quizobj->get_course()->shortname . ': ' . $page->title);
         $page->set_cacheable(false);
@@ -110,6 +128,9 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
         $page->set_pagelayout('secure');
     }
 
+    /**
+     * Generate the message that tells users they must use the secure browser.
+     */
     public static function get_blocked_user_message() {
         $url = get_config('quizaccess_safeexambrowser', 'downloadlink');
         if ($url) {
@@ -122,32 +143,44 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
     }
 
     /**
-     * This helper method 
-     * @param unknown_type $keys
-     * @return bool 
-     */
-    public static function validate_keys($keys) {
-        $sep = '[ \t\n\r,;]';
-        $hash = '[a-f0-9]{64}';
-        $regex = "~^{$sep}*{$hash}(?:{$sep}+{$hash})*{$sep}*~$";
-        return preg_match($regex, $keys);
-    }
-
-    /**
-     * This helper method takes a set of keys that would pass the slighly relaxed
-     * validation peformed by {@link validate_keys()}, and cleans it up so that
-     * the allowed keys are strictly separated by a single newline character.
+     * This helper method takes list of keys in a string and splits it into an
+     * array of separate keys.
      * @param string $keys the allowed keys.
      * @return string a cleaned up version of the $keys string.
      */
     public static function split_keys($keys) {
-        return preg_split('~[ \t\n\r,;]+~', $keys, -1, PREG_SPLIT_NO_EMPTY);
+        $keys = preg_split('~[ \t\n\r,;]+~', $keys, -1, PREG_SPLIT_NO_EMPTY);
+        foreach ($keys as $i => $key) {
+            $keys[$i] = strtolower($key);
+        }
+        return $keys;
+    }
+
+    /**
+     * This helper method validates a string containing a list of keys.
+     * @param string $keys a list of keys separated by newlines.
+     * @return array list of any problems found.
+     */
+    public static function validate_keys($keys) {
+        $errors = array();
+        $keys = self::split_keys($keys);
+        $uniquekeys = array();
+        foreach ($keys as $i => $key) {
+            if (!preg_match('~^[a-f0-9]{64}$~', $key)) {
+                $errors[] = get_string('allowedbrowserkeyssyntax', 'quizaccess_safeexambrowser');
+                break;
+            }
+        }
+        if (count($keys) != count(array_unique($keys))) {
+            $errors[] = get_string('allowedbrowserkeysdistinct', 'quizaccess_safeexambrowser');
+        }
+        return $errors;
     }
 
     /**
      * This helper method takes a set of keys that would pass the slighly relaxed
      * validation peformed by {@link validate_keys()}, and cleans it up so that
-     * the allowed keys are strictly separated by a single newline character.
+     * the allowed keys are lower case and separated by a single newline character.
      * @param string $keys the allowed keys.
      * @return string a cleaned up version of the $keys string.
      */
@@ -169,9 +202,17 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
         if (!array_key_exists('HTTP_X_SAFEEXAMBROSWER_REQUESTHASH', $_SERVER)) {
             return false;
         }
-        // TODO
-        $url = '';
-        return self::check_keys($keys, $url, trim($_SERVER['HTTP_X_SAFEEXAMBROSWER_REQUESTHASH']));
+        return self::check_keys($keys, self::get_this_page_url(),
+                trim($_SERVER['HTTP_X_SAFEEXAMBROSWER_REQUESTHASH']));
+    }
+
+    /**
+     * Return the full URL that was used to request the current page, which is
+     * what we need for verifying the X-SafeExamBrowser-RequestHash header.
+     */
+    public static function get_this_page_url() {
+        global $FULLME;
+        return $FULLME;
     }
 
     /**
@@ -197,7 +238,7 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
      * @param string $header the value of the X-SafeExamBrowser-RequestHash to check.
      * @return bool true if the hash matches.
      */
-    public static function check_key(array $key, $url, $header) {
-        return hash($url . $key) === $header;
+    public static function check_key($key, $url, $header) {
+        return hash('sha256', $url . $key) === $header;
     }
 }
