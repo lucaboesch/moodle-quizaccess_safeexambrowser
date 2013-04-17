@@ -114,7 +114,7 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
     }
 
     /**
-     * 
+     * @return array the list of allowed browser keys for the quiz we are protecting.
      */
     public function get_allowed_keys() {
         return $this->allowedkeys;
@@ -191,7 +191,7 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
     /**
      * Check the whether the current request is permitted.
      * @param array $keys allowed keys
-     * @param 
+     * @param context $context the context in which we are checking access. (Normally the quiz context.)
      * @return bool true if the user is using a browser with a permitted key, false if not,
      * or of the user has the 'quizaccess/safeexambrowser:exemptfromcheck' capability.
      */

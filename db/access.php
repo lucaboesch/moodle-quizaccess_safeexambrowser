@@ -28,14 +28,13 @@ $capabilities = array(
 
     // Users with this capability are exhempt from the requirements that they
     // must be using the Secure browser to attempt or preview the quiz.
+    // Note that teachers will already be exempt from the check by virtue of
+    // having the mod/quiz:preview capability.
     'quizaccess/safeexambrowser:exemptfromcheck' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
+        ),
     ),
 );
 

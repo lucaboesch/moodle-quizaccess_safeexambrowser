@@ -30,6 +30,7 @@ $string['allowedbrowserkeys_help'] = 'In this box you can enter the allowed brow
 $string['allowedbrowserkeysdistinct'] = 'The keys must all be different.';
 $string['allowedbrowserkeyssyntax'] = 'You must enter the allowed keys one per line. A key should be a 64-character hex string.';
 $string['pluginname'] = 'Safe Exam Browser quiz access rule';
+$string['safeexambrowser:exemptfromcheck'] = 'Exempt from Safe Exam Browser check';
 $string['safebrowserdownloadurl'] = 'Safe Exam Browser download URL.';
 $string['safebrowserdownloadurl_desc'] = 'If you provide a URL here, then users will be told that they can download the required version of Safe Exam Browser from there.';
 $string['safebrowsermustbeused'] = 'You must use an approved version of Safe Exam Browser to attempt this quiz.';
