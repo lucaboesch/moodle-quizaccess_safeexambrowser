@@ -57,8 +57,11 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
             mod_quiz_mod_form $quizform, MoodleQuickForm $mform) {
         $mform->addElement('textarea', 'safeexambrowser_allowedkeys',
                 get_string('allowedbrowserkeys', 'quizaccess_safeexambrowser'),
-                array('rows' => 5, 'cols' => 70));
+                array('rows' => 2, 'cols' => 70));
         $mform->setType('safeexambrowser_allowedkeys', PARAM_RAW_TRIMMED);
+        $mform->setAdvanced('safeexambrowser_allowedkeys',
+                get_config('quizaccess_safeexambrowser', 'allowedkeys_adv')
+        );
         $mform->addHelpButton('safeexambrowser_allowedkeys',
                 'allowedbrowserkeys', 'quizaccess_safeexambrowser');
     }
