@@ -199,11 +199,11 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
         if (has_capability('quizaccess/safeexambrowser:exemptfromcheck', $context)) {
             return true;
         }
-        if (!array_key_exists('HTTP_X_SAFEEXAMBROSWER_REQUESTHASH', $_SERVER)) {
+        if (!array_key_exists('HTTP_X_SAFEEXAMBROWSER_REQUESTHASH', $_SERVER)) {
             return false;
         }
         return self::check_keys($keys, self::get_this_page_url(),
-                trim($_SERVER['HTTP_X_SAFEEXAMBROSWER_REQUESTHASH']));
+                trim($_SERVER['HTTP_X_SAFEEXAMBROWSER_REQUESTHASH']));
     }
 
     /**
