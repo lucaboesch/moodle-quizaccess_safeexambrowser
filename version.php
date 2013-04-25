@@ -26,9 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2013041700;
-$plugin->requires  = 2011120500;
+$plugin->version   = 2013042500;
+$plugin->requires  = 2012062506;
 $plugin->cron      = 0;
 $plugin->component = 'quizaccess_safeexambrowser';
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release   = '0.5';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = '0.9';
