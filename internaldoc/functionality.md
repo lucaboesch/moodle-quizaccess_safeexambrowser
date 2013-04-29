@@ -20,6 +20,9 @@ then when a student is told that they must be using Safe Exam Browser, then they
 will be given a link for where to download it. If this is not set, the message
 is shown with no download link.
 
+The second setting controls whether, on the quiz setting form, the Allowed
+browser keys setting is an advanced setting.
+
 
 New quiz setting
 ----------------
@@ -35,6 +38,7 @@ student can use any browser.
 
 When using Safe Exam Browser, you will probably also wish to turn off the
 Display -> Show blocks during quiz attempts option.
+
 
 Capabilities
 ------------
