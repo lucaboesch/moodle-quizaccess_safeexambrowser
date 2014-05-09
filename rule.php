@@ -97,6 +97,11 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
         }
     }
 
+    public static function delete_settings($quiz) {
+        global $DB;
+        $DB->delete_records('quizaccess_safeexambrowser', array('quizid' => $quiz->id));
+    }
+
     public static function get_settings_sql($quizid) {
         return array(
             'safeexambrowser.allowedkeys AS safeexambrowser_allowedkeys',
