@@ -1,10 +1,10 @@
-Safe Exam Browser quiz access rule for Moodle - Functionality summary
-=====================================================================
+Safe Exam Browser (SEB) quiz access rule for Moodle - Functionality summary
+===========================================================================
 
 Installation
 ------------
 
-This plugin is a quiz access rule plugin. I needs to be installed into the
+This plugin is a quiz access rule plugin. It needs to be installed into the
 mod/quiz/accessrule folder, as mod/quiz/accessrule/safeexambrowser. Once you
 have copied the code into place, visit the Moodle Site adminstration -> Notifications
 page to complete the installation.

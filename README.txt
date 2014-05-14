@@ -1,4 +1,4 @@
-Safe Exam Browser quiz access rule
+Safe Exam Browser (SEB) quiz access rule
 
 This quiz access rule was created by Tim Hunt at the Open University. It can be
 used with versions 2.3.7 of Moodle, or later. (For Moodle 2.4, you should be

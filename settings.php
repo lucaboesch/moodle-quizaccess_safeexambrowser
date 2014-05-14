@@ -31,6 +31,6 @@ if ($ADMIN->fulltree) {
             '', PARAM_URL, '80'));
 
     $settings->add(new admin_setting_configcheckbox('quizaccess_safeexambrowser/allowedkeys_adv',
-        get_string('allowedkeys_adv', 'quizaccess_safeexambrowser'), get_string('allowedkeys_adv_desc', 'quizaccess_safeexambrowser'),
-        '1'));
+                                get_string('allowedkeys_adv', 'quizaccess_safeexambrowser'),
+                                get_string('allowedkeys_adv_desc', 'quizaccess_safeexambrowser'), '1'));
 }
