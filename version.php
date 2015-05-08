@@ -30,3 +30,5 @@ $plugin->cron      = 0;
 $plugin->component = 'quizaccess_safeexambrowser';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '1.1 for Moodle 2.6+';
+
+$plugin->outestssufficient = true;
