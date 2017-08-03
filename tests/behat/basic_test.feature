@@ -21,7 +21,7 @@ Feature: Test all the basic functionality of this quiz access rule
   Scenario: Require students to use Safe Exam Browser.
     # Add a quiz to a course without the condition, and verify that they can start it as normal.
     Given I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I turn editing mode on
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name        | Quiz no SEB                    |
@@ -32,7 +32,7 @@ Feature: Test all the basic functionality of this quiz access rule
       | Correct answer                     | False                        |
     And I log out
     And I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz no SEB"
     And I press "Attempt quiz now"
     Then I should see "Question 1"
@@ -40,7 +40,7 @@ Feature: Test all the basic functionality of this quiz access rule
     # Add a quiz to a course with the condition, and verify that the student is challenged.
     When I log out
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I turn editing mode on
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name                 | Quiz requiring SEB                                               |
@@ -52,7 +52,7 @@ Feature: Test all the basic functionality of this quiz access rule
       | Correct answer                     | True                        |
     And I log out
     And I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz requiring SEB"
     Then I should see "You must use an approved version of Safe Exam Browser to attempt this quiz."
     And I should not see "Attempt quiz now"
@@ -60,7 +60,7 @@ Feature: Test all the basic functionality of this quiz access rule
     # Test that backup and restore keeps the setting.
     When I log out
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I turn editing mode on
     And I duplicate "Quiz requiring SEB" activity editing the new copy with:
       | Name | Duplicated quiz requiring SEB |
