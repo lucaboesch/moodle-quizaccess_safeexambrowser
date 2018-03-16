@@ -24,11 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014111200;
-$plugin->requires  = 2013101800;
+$plugin->version   = 2018021600;
+$plugin->requires  = 2016120500;
 $plugin->cron      = 0;
 $plugin->component = 'quizaccess_safeexambrowser';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.1 for Moodle 2.6+';
+$plugin->release   = '1.2 for Moodle 3.2+';
 
 $plugin->outestssufficient = true;
