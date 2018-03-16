@@ -22,11 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/backup/moodle2/restore_mod_quiz_access_subplugin.class.php');
 require_once($CFG->dirroot . '/mod/quiz/accessrule/safeexambrowser/rule.php');
-
-defined('MOODLE_INTERNAL') || die();
 
 
 /**
