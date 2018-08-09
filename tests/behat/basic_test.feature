@@ -43,9 +43,9 @@ Feature: Test all the basic functionality of safe exam browser access rule
     And I am on "Course 1" course homepage
     And I turn editing mode on
     And I add a "Quiz" to section "1" and I fill the form with:
-      | Name                      | Quiz requiring SEB                                               |
-      | Description               | This quiz requires SEB                                           |
-      | Allowed browser exam keys | 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef |
+      | Name                 | Quiz requiring SEB                                               |
+      | Description          | This quiz requires SEB                                           |
+      | Allowed browser keys | 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef |
     And I add a "True/False" question to the "Quiz requiring SEB" quiz with:
       | Question name                      | First question              |
       | Question text                      | Is this the first question? |

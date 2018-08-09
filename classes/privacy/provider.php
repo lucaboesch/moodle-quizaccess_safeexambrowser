@@ -17,7 +17,7 @@
  * Privacy Subsystem implementation for quizaccess_safeexambrowser.
  *
  * @package    quizaccess_safeexambrowser
- * @copyright  2018 The Open University 
+ * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace quizaccess_safeexambrowser\privacy;
@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Privacy Subsystem for quizaccess_safeexambrowser implementing null_provider.
  *
- * @copyright  2018 The Open University 
+ * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements \core_privacy\local\metadata\null_provider {

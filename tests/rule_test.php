@@ -36,6 +36,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/safeexambrowser/rule.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quizaccess_safeexambrowser_testcase extends basic_testcase {
+    /** @var string Example value used in the tests. */
     const EXAMPLE_KEY = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
 
     public function test_check_key_matches() {
