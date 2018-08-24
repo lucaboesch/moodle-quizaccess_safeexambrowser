@@ -1,5 +1,5 @@
 @ou @ou_vle @quizaccess @quizaccess_safeexambrowser
-Feature: Test all the basic functionality of this quiz access rule
+Feature: Test all the basic functionality of safe exam browser access rule
   In order to stop students cheating
   As an teacher
   I will require them to use Safe Exam Browser

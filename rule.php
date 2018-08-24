@@ -122,7 +122,9 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
     }
 
     /**
-     * @return array the list of allowed browser keys for the quiz we are protecting.
+     * Get the list of allowed browser keys for the quiz we are protecting.
+     *
+     * @return array of string, the allowed keys.
      */
     public function get_allowed_keys() {
         return $this->allowedkeys;
@@ -154,7 +156,7 @@ class quizaccess_safeexambrowser extends quiz_access_rule_base {
      * This helper method takes list of keys in a string and splits it into an
      * array of separate keys.
      * @param string $keys the allowed keys.
-     * @return string a cleaned up version of the $keys string.
+     * @return array of string, the separate keys.
      */
     public static function split_keys($keys) {
         $keys = preg_split('~[ \t\n\r,;]+~', $keys, -1, PREG_SPLIT_NO_EMPTY);

@@ -37,3 +37,4 @@ $string['safebrowserdownloadurl'] = 'Safe Exam Browser download URL.';
 $string['safebrowserdownloadurl_desc'] = 'If you provide a URL here, then users will be told that they can download the required version of Safe Exam Browser from there.';
 $string['safebrowsermustbeused'] = 'You must use an approved version of Safe Exam Browser to attempt this quiz.';
 $string['safebrowsermustbeusedwithlink'] = 'You must use an approved version of Safe Exam Browser to attempt this quiz. You can download it from {$a->link}.';
+$string['privacy:metadata'] = 'The Safe Exam Browser quiz access rule plugin does not store any personal data.';
