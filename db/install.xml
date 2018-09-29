@@ -8,7 +8,9 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="quizid"/>
         <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Foreign key to quiz.id." PREVIOUS="id" NEXT="allowedkeys"/>
-        <FIELD NAME="allowedkeys" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="A permitted browser keys for this quiz, newline separated." PREVIOUS="quizid"/>
+        <FIELD NAME="allowedkeys" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="A permitted browser keys for this quiz, newline separated." PREVIOUS="quizid" NEXT="allowedconfigkeys"/>
+        <FIELD NAME="allowedconfigkeys" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="A permitted config key for this quiz, newline separated." PREVIOUS="allowedkeys" NEXT="examconfig"/>
+        <FIELD NAME="examconfig" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="A SEB config for this quiz" PREVIOUS="allowedconfigkeys"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="quizid"/>
