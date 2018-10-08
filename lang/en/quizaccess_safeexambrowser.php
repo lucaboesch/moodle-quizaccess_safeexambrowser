@@ -45,8 +45,8 @@
     $string['examconfig_adv'] = 'Exam config is an advanced setting';
     
     $string['quitpassword'] = 'Quit/unlock password';
-    $string['quitpassword'] = 'Quiz password';
-    $string['quitpassword'] = 'Quiz password';
+    $string['quitpassword_help'] = 'This quit/unlock password will replace the one set in exam config';
+    $string['quitpassword_adv'] = 'Quit/unlock password is an advanced setting';
 
     $string['pluginname'] = 'Safe Exam Browser quiz access rule';
     $string['safeexambrowser:exemptfromcheck'] = 'Exempt from Safe Exam Browser check';
