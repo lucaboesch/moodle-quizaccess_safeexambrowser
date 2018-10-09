@@ -90,18 +90,15 @@
             
             $mform->addElement('textarea', 'safeexambrowser_examconfig',
                                get_string('examconfig', 'quizaccess_safeexambrowser'),
-                               array('rows' => 10, 'cols' => 70));
+                               array( 'wrap' => 'soft', 'rows' => 10, 'cols' => 70));
             $mform->setType('safeexambrowser_examconfig', PARAM_RAW);
             $mform->setAdvanced('safeexambrowser_examconfig',
                                 get_config('quizaccess_safeexambrowser', 'examconfig_adv')
                                 );
             
-            //        $mform->addElement('static', 'safeexambrowser_quitpasswordmessage', '',
-            //                           get_string('requirepasswordmessage', 'quizaccess_safeexambrowser'));
-            //
             // Don't use the 'proper' field name of 'password' since that get's
             // Firefox's password auto-complete over-excited.
-            $mform->addElement('password', 'safeexambrowser_quitpassword',
+            $mform->addElement('passwordunmask', 'safeexambrowser_quitpassword',
                                get_string('quitpassword', 'quizaccess_safeexambrowser'), array('autofocus' => 'true'));
             $mform->setAdvanced('safeexambrowser_quitpassword',
                                 get_config('quizaccess_safeexambrowser', 'quitpassword_adv')
@@ -133,20 +130,53 @@
             if (!empty($data['safeexambrowser_examconfig'])) {
                 $examconfig = $data['safeexambrowser_examconfig'];
                 $plist = new CFPropertyList\CFPropertyList();
-//                echo '<pre>';
-//                var_dump($examconfig);
-//                echo '</pre>';
 
                 $plist->parse($examconfig);
-
-                $plistarray = $plist->toArray();
-                ksort($plistarray, SORT_STRING|SORT_FLAG_CASE);
-                
 //                echo '<pre>';
-//                var_dump($plistarray);
+//                var_dump($plist);
 //                echo '</pre>';
 
-                $sebjson = json_encode($plistarray, JSON_PARTIAL_OUTPUT_ON_ERROR|JSON_UNESCAPED_SLASHES);
+                $plistarray = $plist->toArray();
+                
+                function _strcmp($a, $b)
+                {
+                    $casecompareresult = strcasecmp($a, $b);
+                    if ($casecompareresult == 0) {
+                        $casecompareresult = 1;
+                    }
+                    return $casecompareresult;
+                }
+
+                function isAssoc($arr){
+                    return array_keys($arr) !== range(0, count($arr) - 1);
+                }
+
+                function parseconfigdict($dict)
+                {
+                    uksort($dict, '_strcmp');
+                    
+                    foreach($dict as $key => $value) {
+                        if (is_array($value) && !isAssoc($value)) {
+                            $value = parseconfigdict($value);
+                            echo '<pre>';
+                            var_dump($value);
+                            echo '</pre>';
+                            $dict[$key] = $value;
+                        }
+                    }
+                    return $dict;
+                }
+
+                // Remove the "originatorVersion" key/value, as this is not used in the Config Key
+                unset($plistarray["originatorVersion"]);
+                
+                $plistarray = parseconfigdict($plistarray);
+                
+                echo '<pre>';
+                var_dump($plistarray);
+                echo '</pre>';
+
+                $sebjson = stripslashes(json_encode($plistarray, JSON_PARTIAL_OUTPUT_ON_ERROR|JSON_UNESCAPED_SLASHES));
                 echo '<pre>';
                 var_dump($sebjson);
                 echo '</pre>';
