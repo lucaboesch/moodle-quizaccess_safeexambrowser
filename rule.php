@@ -66,8 +66,8 @@
             return new self($quizobj, $timenow);
         }
         
-        public static function add_settings_form_fields(
-                                                        mod_quiz_mod_form $quizform, MoodleQuickForm $mform) {
+        public static function add_settings_form_fields(mod_quiz_mod_form $quizform, MoodleQuickForm $mform) {
+            
             $mform->addElement('textarea', 'safeexambrowser_allowedkeys',
                                get_string('allowedbrowserkeys', 'quizaccess_safeexambrowser'),
                                array('rows' => 2, 'cols' => 70));
@@ -126,66 +126,18 @@
                 }
             }
 
-            // Calculate Config Key from exam config
+            // Validate exam config
             if (!empty($data['safeexambrowser_examconfig'])) {
                 $examconfig = $data['safeexambrowser_examconfig'];
                 $plist = new CFPropertyList\CFPropertyList();
-
-                $plist->parse($examconfig);
-//                echo '<pre>';
-//                var_dump($plist);
-//                echo '</pre>';
-
-                $plistarray = $plist->toArray();
                 
-                function _strcmp($a, $b)
-                {
-                    $casecompareresult = strcasecmp($a, $b);
-                    if ($casecompareresult == 0) {
-                        $casecompareresult = 1;
-                    }
-                    return $casecompareresult;
+                try {
+                    $plist->parse($examconfig);
+
+                } catch (Exception $exception) {
+                    $configerror = 'Config is invalid, ' . $exception->getMessage();
+                    $errors['safeexambrowser_examconfig'] = implode(' ', $configerror);
                 }
-
-                function isAssoc($arr){
-                    return array_keys($arr) !== range(0, count($arr) - 1);
-                }
-
-                function parseconfigdict($dict)
-                {
-                    uksort($dict, '_strcmp');
-                    
-                    foreach($dict as $key => $value) {
-                        if (is_array($value) && !isAssoc($value)) {
-                            $value = parseconfigdict($value);
-                            echo '<pre>';
-                            var_dump($value);
-                            echo '</pre>';
-                            $dict[$key] = $value;
-                        }
-                    }
-                    return $dict;
-                }
-
-                // Remove the "originatorVersion" key/value, as this is not used in the Config Key
-                unset($plistarray["originatorVersion"]);
-                
-                $plistarray = parseconfigdict($plistarray);
-                
-                echo '<pre>';
-                var_dump($plistarray);
-                echo '</pre>';
-
-                $sebjson = stripslashes(json_encode($plistarray, JSON_PARTIAL_OUTPUT_ON_ERROR|JSON_UNESCAPED_SLASHES));
-                echo '<pre>';
-                var_dump($sebjson);
-                echo '</pre>';
-                
-                $configkey = hash('sha256', $sebjson);
-                
-                echo '<pre>';
-                var_dump($configkey);
-                echo '</pre>';
             }
             
             return $errors;
@@ -200,19 +152,28 @@
                 $DB->delete_records('quizaccess_safeexambrowser', array('quizid' => $quiz->id));
             } else {
                 $record = $DB->get_record('quizaccess_safeexambrowser', array('quizid' => $quiz->id));
+                
+                $allowedconfigkeys = self::clean_keys($quiz->safeexambrowser_allowedconfigkeys);
+                $examconfig = $quiz->safeexambrowser_examconfig;
+                
+                $configkey = self::process_examconfig($examconfig);
+                if (!empty($configkey)) {
+                    $allowedconfigkeys = $configkey;
+                }
+                
                 if (!$record) {
                     $record = new stdClass();
                     $record->quizid = $quiz->id;
-                    $record->allowedkeys = self::clean_keys($quiz->safeexambrowser_allowedkeys);
+                    $record->allowedkeys = $allowedconfigkeys;
                     $record->allowedconfigkeys = self::clean_keys($quiz->safeexambrowser_allowedconfigkeys);
-                    $record->examconfig = self::clean_keys($quiz->safeexambrowser_examconfig);
-                    $record->quitpassword = self::clean_keys($quiz->safeexambrowser_quitpassword);
+                    $record->examconfig = $quiz->safeexambrowser_examconfig;
+                    $record->quitpassword = $quiz->safeexambrowser_quitpassword;
                     $DB->insert_record('quizaccess_safeexambrowser', $record);
                 } else {
                     $record->allowedkeys = self::clean_keys($quiz->safeexambrowser_allowedkeys);
-                    $record->allowedconfigkeys = self::clean_keys($quiz->safeexambrowser_allowedconfigkeys);
-                    $record->examconfig = self::clean_keys($quiz->safeexambrowser_examconfig);
-                    $record->quitpassword = self::clean_keys($quiz->safeexambrowser_quitpassword);
+                    $record->allowedconfigkeys = $allowedconfigkeys;
+                    $record->examconfig = $quiz->safeexambrowser_examconfig;
+                    $record->quitpassword = $quiz->safeexambrowser_quitpassword;
                     $DB->update_record('quizaccess_safeexambrowser', $record);
                 }
             }
@@ -229,6 +190,103 @@
                          'LEFT JOIN {quizaccess_safeexambrowser} safeexambrowser ON safeexambrowser.quizid = quiz.id',
                          array());
         }
+        
+        public static function process_examconfig($examconfig) {
+
+            function _strcmp($a, $b)
+            {
+                $casecompareresult = strcasecmp($a, $b);
+                if ($casecompareresult == 0) {
+                    $casecompareresult = 1;
+                }
+                return $casecompareresult;
+            }
+            
+            function isAssoc($arr){
+                return (count($arr) !== 0 && array_keys($arr) !== range(0, count($arr) - 1));
+            }
+            
+            function parseconfigdict($dict)
+            {
+                uksort($dict, '_strcmp');
+                
+                foreach($dict as $key => $value) {
+                    
+                    if (is_array($value) && isAssoc($value)) {
+                        $value = parseconfigdict($value);
+                        //                            echo '<pre>sorted dictionary: ';
+                        //                            var_dump($value);
+                        //                            echo '</pre>';
+                        $dict[$key] = $value;
+                    }
+                    if (is_array($value) && !isAssoc($value)) {
+                        $value = parseconfigarray($value);
+                        //                            echo '<pre>sorted array: ';
+                        //                            var_dump($value);
+                        //                            echo '</pre>';
+                        $dict[$key] = $value;
+                    }
+                    
+                }
+                return $dict;
+            }
+            
+            function parseconfigarray($array)
+            {
+                foreach($array as &$element) {
+                    if (is_array($element) && isAssoc($element)) {
+                        $element = parseconfigdict($element);
+                        //                            echo '<pre>sorted dictionary inside of array: ';
+                        //                            var_dump($element);
+                        //                            echo '</pre>';
+                    }
+                }
+                unset($element);
+                return $array;
+                
+            }
+
+            if (!empty($examconfig)) {
+
+                // Calculate Config Key from exam config
+                $plist = new CFPropertyList\CFPropertyList();
+                
+                $plist->parse($examconfig);
+                //                echo '<pre>';
+                //                var_dump($plist);
+                //                echo '</pre>';
+                
+                $plistarray = $plist->toArray();
+                
+                // Remove the "originatorVersion" key/value, as this is not used in the Config Key
+                unset($plistarray["originatorVersion"]);
+                
+                $plistarray = parseconfigdict($plistarray);
+                
+                //                echo '<pre>object after sorting:';
+                //                var_dump($plistarray);
+                //                echo '</pre>';
+                
+                $sebjson = stripslashes(json_encode($plistarray, JSON_PARTIAL_OUTPUT_ON_ERROR|JSON_UNESCAPED_SLASHES));
+                //                echo '<pre>';
+                //                var_dump($sebjson);
+                //                echo '</pre>';
+                
+                $configkey = hash('sha256', $sebjson);
+                
+                //                echo '<pre>';
+                //                var_dump($data['safeexambrowser_examconfig']);
+                //                echo '</pre>';
+
+                return $configkey;
+                
+            } else {
+                
+                return "";
+            }
+            
+        }
+        
         
         public function prevent_access() {
             if (!self::check_access($this->allowedkeys, $this->allowedconfigkeys, $this->quizobj->get_context())) {
