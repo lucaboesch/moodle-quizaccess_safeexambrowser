@@ -49,17 +49,20 @@
         /** @var array the allowed keys. */
         protected $allowedkeys;
         protected $allowedconfigkeys;
-        
+        protected $examconfig;
+
         public function __construct($quizobj, $timenow) {
             parent::__construct($quizobj, $timenow);
             $this->allowedkeys = self::split_keys($this->quiz->safeexambrowser_allowedkeys);
             $this->allowedconfigkeys = self::split_keys($this->quiz->safeexambrowser_allowedconfigkeys);
+            $this->examconfig = $this->quiz->safeexambrowser_examconfig;
         }
         
         public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
             
             if (empty($quizobj->get_quiz()->safeexambrowser_allowedkeys) &&
-                empty($quizobj->get_quiz()->safeexambrowser_allowedconfigkeys)) {
+                empty($quizobj->get_quiz()->safeexambrowser_allowedconfigkeys) &&
+                empty($quizobj->get_quiz()->safeexambrowser_examconfig)) {
                 return null;
             }
             
@@ -164,8 +167,8 @@
                 if (!$record) {
                     $record = new stdClass();
                     $record->quizid = $quiz->id;
-                    $record->allowedkeys = $allowedconfigkeys;
-                    $record->allowedconfigkeys = self::clean_keys($quiz->safeexambrowser_allowedconfigkeys);
+                    $record->allowedkeys = self::clean_keys($quiz->safeexambrowser_allowedkeys);
+                    $record->allowedconfigkeys = $allowedconfigkeys;
                     $record->examconfig = $quiz->safeexambrowser_examconfig;
                     $record->quitpassword = $quiz->safeexambrowser_quitpassword;
                     $DB->insert_record('quizaccess_safeexambrowser', $record);
@@ -248,29 +251,44 @@
 
             if (!empty($examconfig)) {
 
+                $examconfig = str_replace(array("\n", "\r", "\t"), '', $examconfig);
+
                 // Calculate Config Key from exam config
                 $plist = new CFPropertyList\CFPropertyList();
                 
                 $plist->parse($examconfig);
-                //                echo '<pre>';
-                //                var_dump($plist);
-                //                echo '</pre>';
+//                                echo '<pre>';
+//                                var_dump($plist);
+//                                echo '</pre>';
                 
                 $plistarray = $plist->toArray();
+
+//                echo '<pre>object before sorting:';
+//                var_dump($plistarray);
+//                echo '</pre>';
+
+//                foreach ($plistarray as $plistobject) {
+//                    echo '<pre>';
+//                    var_dump(gettype($plistobject));
+//                    echo '</pre>';
+//                }
+                
+                // Remove the "configKeyContainedKeys" key/value, as this empty dictionary was wrongly added to settings in an older SEB version
+                unset($plistarray["configKeyContainedKeys"]);
                 
                 // Remove the "originatorVersion" key/value, as this is not used in the Config Key
                 unset($plistarray["originatorVersion"]);
                 
                 $plistarray = parseconfigdict($plistarray);
                 
-                //                echo '<pre>object after sorting:';
-                //                var_dump($plistarray);
-                //                echo '</pre>';
+//                                echo '<pre>object after sorting:';
+//                                var_dump($plistarray);
+//                                echo '</pre>';
                 
                 $sebjson = stripslashes(json_encode($plistarray, JSON_PARTIAL_OUTPUT_ON_ERROR|JSON_UNESCAPED_SLASHES));
-                //                echo '<pre>';
-                //                var_dump($sebjson);
-                //                echo '</pre>';
+//                                echo '<pre>';
+//                                var_dump($sebjson);
+//                                echo '</pre>';
                 
                 $configkey = hash('sha256', $sebjson);
                 
@@ -284,15 +302,25 @@
                 
                 return "";
             }
-            
+
         }
         
         
         public function prevent_access() {
-            if (!self::check_access($this->allowedkeys, $this->allowedconfigkeys, $this->quizobj->get_context())) {
-                return self::get_blocked_user_message();
+            if (empty($this->examconfig)) {
+                if (!self::check_access($this->allowedkeys, $this->allowedconfigkeys, $this->quizobj->get_context())) {
+                    return self::get_blocked_user_message();
+                } else {
+                    return false;
+                }
             } else {
-                return false;
+                // If using an exam config for the quiz, we generate an SEB config link
+                // and a quit link, depending on if the quiz is accessed with SEB/the correct config
+                if (!self::check_access($this->allowedkeys, $this->allowedconfigkeys, $this->quizobj->get_context())) {
+                    return self::get_config_link($this->examconfig);
+                } else {
+                    return false;
+                }
             }
         }
         
@@ -340,6 +368,30 @@
             }
         }
         
+        /**
+         * Generate an SEB config link
+         */
+        public static function get_config_link($examconfig) {
+            $url = get_config('quizaccess_safeexambrowser', 'downloadlink');
+            if ($url) {
+                $a = new stdClass();
+                $a->link = html_writer::link($url, $url);
+                $downloadsebfrom = get_string('safebrowserdownloadlink', 'quizaccess_safeexambrowser', $a);
+            }
+            $sebconfig = 'data:application/seb;text,' . str_replace(' ' , '%20', $examconfig);
+            $a = new stdClass();
+            $a->link = html_writer::link($sebconfig, get_string('safebrowserstartexamlink', 'quizaccess_safeexambrowser'));
+//            $a->link = html_writer::link($url, $url);
+            $startexamseb = get_string('safebrowserconfiglink', 'quizaccess_safeexambrowser', $a);
+                
+            if ($url) {
+                return $startexamseb . ' ' . $downloadsebfrom;
+            } else {
+                return $startexamseb;
+            }
+        }
+
+
         /**
          * This helper method takes list of keys in a string and splits it into an
          * array of separate keys.

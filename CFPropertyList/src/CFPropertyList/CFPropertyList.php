@@ -128,7 +128,8 @@ class CFPropertyList extends CFBinaryPropertyList implements Iterator
     'date'    => 'CFDate',
     'true'    => 'CFBoolean',
     'false'   => 'CFBoolean',
-    'data'    => 'CFData',
+    'data'    => 'CFString',
+    //'data'    => 'CFData',
     'array'   => 'CFArray',
     'dict'    => 'CFDictionary'
     );
