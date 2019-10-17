@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 
 $string['allowedbrowserkeys'] = 'Allowed browser exam keys';
-$string['allowedbrowserkeys_help'] = 'In this box you can enter the allowed browser exam keys for versions of Safe Exam Browser that are permitted to access this quiz. If no keys are entered, then SEB is not required for this quiz.';
+$string['allowedbrowserkeys_help'] = 'In this box you can enter the allowed browser exam keys for versions of Safe Exam Browser that are permitted to access this quiz. If no keys are entered, then no specific browser exam key is required for this quiz.';
 $string['allowedbrowserkeysdistinct'] = 'The keys must all be different.';
 $string['allowedbrowserkeyssyntax'] = 'You must enter the allowed keys one per line. A key should be a 64-character hex string.';
 $string['allowedkeys_adv'] = 'Keys are an advanced setting';
