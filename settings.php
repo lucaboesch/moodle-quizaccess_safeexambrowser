@@ -28,7 +28,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('quizaccess_safeexambrowser/downloadlink',
             get_string('safebrowserdownloadurl', 'quizaccess_safeexambrowser'),
             get_string('safebrowserdownloadurl_desc', 'quizaccess_safeexambrowser'),
-            '', PARAM_URL, '80'));
+            '', PARAM_URL));
 
     $settings->add(new admin_setting_configcheckbox('quizaccess_safeexambrowser/allowedkeys_adv',
                                 get_string('allowedkeys_adv', 'quizaccess_safeexambrowser'),

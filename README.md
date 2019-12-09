@@ -10,11 +10,12 @@ that should be allowed to attempt the quiz. There is also a new capability
 teachers and above) are exempt from the secure browser check.
 
 To install using git, type this command in the root of your Moodle install
-    git clone git://github.com/moodleou/moodle-quizaccess_safeexambrowser.git mod/quiz/accessrule/safeexambrowser
-    echo '/mod/quiz/accessrule/safeexambrowser/' >> .git/info/exclude
-
+```
+git clone git://github.com/lucaboesch/moodle-quizaccess_safeexambrowser.git mod/quiz/accessrule/safeexambrowser
+echo '/mod/quiz/accessrule/safeexambrowser/' >> .git/info/exclude
+```
 Alternatively, download the zip from
-    https://github.com/moodleou/moodle-quizaccess_safeexambrowser/zipball/master
+    https://github.com/lucaboesch/moodle-quizaccess_safeexambrowser/zipball/master
 unzip it into the mod/quiz/accessrule folder, and then rename the new
 folder to safeexambrowser.
 
