@@ -1,10 +1,8 @@
 language: php
 
-dist: xenial
-sudo: required
+os: linux
 
-services:
-  mysql
+dist: xenial
 
 addons:
   firefox: "47.0.1"
@@ -19,17 +17,28 @@ cache:
     - $HOME/.composer/cache
     - $HOME/.npm
 
-services:
-  - mysql
-
 php:
   - 7.0
   - 7.1
   - 7.2
   - 7.3
 
+before_install:
+  - phpenv config-rm xdebug.ini
+  - nvm install 8.9
+  - nvm use 8.9
+  - cd ../..
+  - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci install
+
+services:
+  - mysql
+
 env:
-  matrix:
+  jobs:
    - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
    - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
    - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
@@ -41,7 +50,7 @@ env:
    - DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
    - DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
 
-matrix:
+jobs:
  exclude:
   - php: 7.0
     env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
@@ -64,17 +73,6 @@ matrix:
   - php: 7.3
     env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
  fast_finish: true
-
-before_install:
-  - phpenv config-rm xdebug.ini
-  - nvm install 8.9
-  - nvm use 8.9
-  - cd ../..
-  - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
-  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
-
-install:
-  - moodle-plugin-ci install
 
 script:
   - moodle-plugin-ci phplint
