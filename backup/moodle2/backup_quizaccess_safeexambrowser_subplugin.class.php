@@ -42,6 +42,11 @@ require_once($CFG->dirroot . '/mod/quiz/backup/moodle2/backup_mod_quiz_access_su
  */
 class backup_quizaccess_safeexambrowser_subplugin extends backup_mod_quiz_access_subplugin {
 
+    /**
+     * Stores the data related to the safeexambrowser quiz access rule settings for a particular quiz.
+     *
+     * @return backup_subplugin_element
+     */
     protected function define_quiz_subplugin_structure() {
 
         // Create XML elements.

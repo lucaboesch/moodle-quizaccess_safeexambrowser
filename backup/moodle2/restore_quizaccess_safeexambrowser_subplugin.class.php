@@ -44,6 +44,11 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/safeexambrowser/rule.php');
  */
 class restore_quizaccess_safeexambrowser_subplugin extends restore_mod_quiz_access_subplugin {
 
+    /**
+     * Provides path structure required to restore data for safeexambrowser quiz access plugin.
+     *
+     * @return array
+     */
     protected function define_quiz_subplugin_structure() {
         $paths = array();
 
