@@ -6,11 +6,6 @@ dist: xenial
 
 addons:
   firefox: "47.0.1"
-  postgresql: "9.6"
-  apt:
-    packages:
-      - openjdk-8-jre-headless
-      - chromium-chromedriver
 
 cache:
   directories:
@@ -22,13 +17,12 @@ php:
   - 7.1
   - 7.2
   - 7.3
+  - 7.4
 
 before_install:
   - phpenv config-rm xdebug.ini
-  - nvm install 8.9
-  - nvm use 8.9
   - cd ../..
-  - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:
@@ -36,6 +30,8 @@ install:
 
 services:
   - mysql
+  - postgresql
+  - docker
 
 env:
   jobs:
@@ -72,6 +68,22 @@ jobs:
     env: DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
   - php: 7.3
     env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
+  - php: 7.4
+    env: DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
+  - php: 7.4
+    env: DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
+  - php: 7.4
+    env: DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
+  - php: 7.4
+    env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+  - php: 7.4
+    env: DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
+  - php: 7.4
+    env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
+  - php: 7.4
+    env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
+  - php: 7.4
+    env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
  fast_finish: true
 
 script:
@@ -83,5 +95,8 @@ script:
   - moodle-plugin-ci savepoints
   - moodle-plugin-ci mustache || true # report issues, but don't fail the build.
   - moodle-plugin-ci grunt
-  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci phpunit --coverage-clover
   - moodle-plugin-ci behat
+
+after_success:
+  - moodle-plugin-ci coveralls-upload

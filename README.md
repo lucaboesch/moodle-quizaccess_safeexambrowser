@@ -1,4 +1,5 @@
-Safe Exam Browser (SEB) quiz access rule
+# Safe Exam Browser (SEB) quiz access rule [![Build Status](https://travis-ci.org/lucaboesch/moodle-quizaccess_safeexambrowser.svg?branch=master)](https://travis-ci.org/lucaboesch/moodle-quizaccess_safeexambrowser) [![Coverage Status](https://coveralls.io/repos/github/lucaboesch/moodle-quizaccess_safeexambrowser/badge.svg?branch=master)](https://coveralls.io/github/lucaboesch/moodle-quizaccess_safeexambrowser?branch=master)
+
 https://moodle.org/plugins/quizaccess_safeexambrowser
 
 This quiz access rule was created by Tim Hunt at the Open University.
