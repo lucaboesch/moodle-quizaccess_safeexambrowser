@@ -22,3 +22,5 @@ folder to safeexambrowser.
 
 Once installed you need to go to the Site administration -> Notifications page
 to let the plugin install itself.
+
+Note this plugin is not needed from Moodle 3.9 onwards. Its function is embedded in the default quizaccess_seb access rule. Version 20200727 is the final release.
